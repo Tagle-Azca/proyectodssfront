@@ -1,0 +1,96 @@
+.employee-container {
+  font-family: "Arial", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* Encabezado */
+.employee-header {
+  background-color: #004aad;
+  color: #ffffff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.employee-header h1 {
+  font-size: 1.5rem;
+}
+
+.logout-button {
+  background-color: #ffffff;
+  color: #004aad;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #d9d9d9;
+}
+
+/* Contenido principal */
+.employee-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.employee-section {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.employee-section h2 {
+  font-size: 1.5rem;
+  color: #004aad;
+  margin-bottom: 1rem;
+}
+
+.employee-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.employee-section li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 1rem;
+  background-color: #004aad;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.action-button:hover {
+  background-color: #00337a;
+  transform: scale(1.05);
+}
+
+/* Pie de página */
+.employee-footer {
+  background-color: #004aad;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}

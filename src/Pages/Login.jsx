@@ -1,91 +1,71 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import ReusableButton from "../Components/Buttons";
-import ReusableTextField from "../Components/TextField";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
+import "../css/Login.css"; // Importa el archivo CSS
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleLogin = () => {
-    if (username === "usuarioBanco" && password === "1234") {
-      alert("Inicio de sesión exitoso");
-      setError("");
+    // Verificación de usuario y redirección
+    const isAuthenticated = login(email, password);
+    if (isAuthenticated) {
+      if (email === "employee@example.com") navigate("/employee");
+      else if (email === "client@example.com") navigate("/client");
     } else {
-      setError("Usuario o contraseña incorrectos");
+      setError("Correo o contraseña incorrectos");
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f4f4f9",
-      }}
-    >
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: 400,
-          padding: 4,
-          borderRadius: 2,
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-          textAlign: "center",
-          backgroundColor: "white",
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          Banco Online
-        </Typography>
-        <Typography variant="subtitle1" sx={{ mb: 2 }}>
-          Inicia sesión en tu cuenta bancaria
-        </Typography>
+    <div className="container">
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="header">
+          <h2 className="header-title">Iniciar Sesión</h2>
+        </div>
 
-        <ReusableTextField
-          label="Usuario"
-          value={username}
-          onChange={handleUsernameChange}
-          placeholder="Ingrese su usuario"
-          fullWidth
-          error={Boolean(error)}
-          helperText={error && "Usuario o contraseña incorrectos"}
-          sx={{ mb: 3 }}
-        />
+        {error && <p className="error">{error}</p>}
 
-        <ReusableTextField
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          placeholder="Ingrese su contraseña"
-          fullWidth
-          error={Boolean(error)}
-          helperText={error && "Usuario o contraseña incorrectos"}
-          sx={{ mb: 3 }}
-        />
+        <div className="input-group">
+          <label className="label" htmlFor="email">
+            Correo
+          </label>
+          <input
+            className="input"
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-        <ReusableButton
-          label="Iniciar Sesión"
-          onClick={handleLogin}
-          color="primary"
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-      </Box>
-    </Box>
+        <div className="input-group">
+          <label className="label" htmlFor="password">
+            Contraseña
+          </label>
+          <input
+            className="input"
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button className="button" type="submit">
+          Iniciar Sesión
+        </button>
+      </form>
+    </div>
   );
 };
 
