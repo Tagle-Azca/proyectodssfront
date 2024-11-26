@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 const Employee = () => {
   const [users, setUsers] = useState([]); // Almacena todos los usuarios
   const [searchTerm, setSearchTerm] = useState(""); // Término de búsqueda
-  const [filteredUsers, setFilteredUsers] = useState([]); // Usuarios filtrados
   const apiUrl = process.env.REACT_APP_API_URL;
 
   // Fetch de usuarios desde el backend
@@ -17,7 +16,6 @@ const Employee = () => {
         }
         const data = await response.json();
         setUsers(data.users);
-        setFilteredUsers(data.users);
       } catch (error) {
         console.error("Error de conexión:", error);
       }
@@ -27,26 +25,23 @@ const Employee = () => {
 
   // Manejar la búsqueda
   const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
-    const filtered = users.filter(
-      (user) =>
-        user.name.toLowerCase().includes(term) ||
-        user.rfc.toLowerCase().includes(term)
-    );
-    setFilteredUsers(filtered);
+    setSearchTerm(e.target.value.toLowerCase());
   };
+
+  // Filtrar usuarios por nombre
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm)
+  );
 
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Dashboard Bancario</h1>
 
-      {/* Resumen del Dashboard */}
-      <div style={styles.summary}>
-        <p style={styles.summaryItem}>Clientes Totales: {users.length}</p>
+      {/* Barra de búsqueda */}
+      <div style={styles.searchContainer}>
         <input
           type="text"
-          placeholder="Buscar por nombre o RFC"
+          placeholder="Buscar por nombre..."
           value={searchTerm}
           onChange={handleSearch}
           style={styles.searchInput}
@@ -54,35 +49,18 @@ const Employee = () => {
       </div>
 
       {/* Tabla de Clientes */}
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Nombre</th>
-            <th style={styles.th}>RFC</th>
-            <th style={styles.th}>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <tr key={user.rfc}>
-                <td style={styles.td}>{user.name}</td>
-                <td style={styles.td}>{user.rfc}</td>
-                <td style={styles.td}>
-                  <button style={styles.button}>Ver Detalles</button>
-                  <button style={styles.button}>Editar</button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="3" style={styles.noResults}>
-                No se encontraron resultados
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div style={styles.cardContainer}>
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
+            <div key={user.rfc} style={styles.card}>
+              <p style={styles.cardName}>{user.name}</p>
+              <p style={styles.cardRFC}>{user.rfc}</p>
+            </div>
+          ))
+        ) : (
+          <p style={styles.noResults}>No se encontraron clientes</p>
+        )}
+      </div>
     </div>
   );
 };
@@ -91,6 +69,8 @@ const styles = {
   container: {
     padding: "20px",
     fontFamily: "Arial, sans-serif",
+    backgroundColor: "#f9f9f9",
+    minHeight: "100vh",
   },
   title: {
     fontSize: "28px",
@@ -98,54 +78,48 @@ const styles = {
     textAlign: "center",
     marginBottom: "20px",
   },
-  summary: {
+  searchContainer: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "center",
     marginBottom: "20px",
   },
-  summaryItem: {
-    fontSize: "18px",
-    color: "#555",
-  },
   searchInput: {
-    padding: "10px",
+    width: "50%",
+    padding: "12px",
     fontSize: "16px",
     border: "1px solid #ddd",
-    borderRadius: "5px",
+    borderRadius: "8px",
     outline: "none",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    marginTop: "20px",
+  cardContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "20px",
   },
-  th: {
+  card: {
+    padding: "20px",
     border: "1px solid #ddd",
-    padding: "10px",
-    backgroundColor: "#f4f4f4",
-    textAlign: "left",
+    borderRadius: "10px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+    textAlign: "center",
   },
-  td: {
-    border: "1px solid #ddd",
-    padding: "10px",
+  cardName: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "#333",
   },
-  button: {
-    padding: "8px 12px",
-    margin: "0 5px",
+  cardRFC: {
     fontSize: "14px",
-    color: "#fff",
-    backgroundColor: "#4facfe",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
+    color: "#777",
+    marginTop: "5px",
   },
   noResults: {
     textAlign: "center",
     color: "#777",
-    padding: "20px",
     fontSize: "16px",
+    marginTop: "20px",
   },
 };
 
