@@ -5,7 +5,7 @@ import Employee from "./Pages/Employee";
 import Client from "./Pages/Client";
 import Landing from "./Pages/Landing";
 import { AuthProvider } from "./Context/AuthContext";
-import ProtectedRoute from "./Components/ProtectedRoute"; // Importa el componente de ruta protegida
+import ProtectedRoute from "./Routes/ProtectRoutes";
 
 const App = () => {
   return (
