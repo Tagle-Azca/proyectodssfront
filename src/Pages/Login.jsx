@@ -37,7 +37,7 @@ const Login = () => {
 
       if (data && data.user) {
         login(data.user); // Guarda al usuario en el contexto global
-        if (data.user.role === "employee") {
+        if (data.user.role === "Administrador") {
           navigate("/employee");
         } else if (data.user.role === "cliente") {
           navigate("/client");
