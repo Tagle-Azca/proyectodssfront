@@ -11,16 +11,32 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Verificación de usuario y redirección
-    const isAuthenticated = login(email, password);
-    if (isAuthenticated) {
-      if (email === "employee@example.com") navigate("/employee");
-      else if (email === "client@example.com") navigate("/client");
-    } else {
-      setError("Correo o contraseña incorrectos");
+    try {
+      const response = await fetch(
+        "https://backbank-0w4g.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Redirecciona según el rol del usuario
+        if (data.user.role === "employee") navigate("/employee");
+        else if (data.user.role === "client") navigate("/client");
+      } else {
+        setError(data.message || "Error al iniciar sesión");
+      }
+    } catch (err) {
+      setError("Error al conectar con el servidor");
     }
   };
 
