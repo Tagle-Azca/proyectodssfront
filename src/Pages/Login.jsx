@@ -30,8 +30,11 @@ const Login = () => {
 
       if (response.ok) {
         // Redirecciona según el rol del usuario
-        if (data.user.role === "employee") navigate("/employee");
-        else if (data.user.role === "client") navigate("/client");
+        if (data.user.role === "administrador") {
+          navigate("/admin");
+        } else if (data.user.role === "cliente") {
+          navigate("/client");
+        }
       } else {
         setError(data.message || "Error al iniciar sesión");
       }
