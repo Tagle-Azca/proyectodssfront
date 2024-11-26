@@ -1,91 +1,140 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import "../css/Login.css"; // Importa el archivo CSS
 
 const Login = () => {
+  const { login } = useAuth(); // Acceso al contexto de autenticación
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
-      const response = await fetch(
-        "https://backbank-0w4g.onrender.com/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error del backend:", errorData); // Agregado
+        setError(errorData.message || "Error al iniciar sesión");
+        return;
+      }
 
       const data = await response.json();
+      console.log("Respuesta del backend:", data);
 
-      if (response.ok) {
-        // Redirecciona según el rol del usuario
-        if (data.user.role === "administrador") {
-          navigate("/admin");
+      if (data && data.user) {
+        login(data.user); // Guarda al usuario en el contexto global
+        if (data.user.role === "employee") {
+          navigate("/employee");
         } else if (data.user.role === "cliente") {
           navigate("/client");
+        } else {
+          navigate("/");
         }
       } else {
-        setError(data.message || "Error al iniciar sesión");
+        setError("Respuesta inesperada del servidor");
       }
     } catch (err) {
-      setError("Error al conectar con el servidor");
+      setError("Error de conexión al servidor");
     }
   };
 
   return (
-    <div className="container">
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="header">
-          <h2 className="header-title">Iniciar Sesión</h2>
-        </div>
-
-        {error && <p className="error">{error}</p>}
-
-        <div className="input-group">
-          <label className="label" htmlFor="email">
-            Correo
-          </label>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h1 style={styles.title}>Iniciar Sesión</h1>
+        <form onSubmit={handleSubmit} style={styles.form}>
           <input
-            className="input"
             type="email"
-            id="email"
+            placeholder="Correo Electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            style={styles.input}
             required
           />
-        </div>
-
-        <div className="input-group">
-          <label className="label" htmlFor="password">
-            Contraseña
-          </label>
           <input
-            className="input"
             type="password"
-            id="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            style={styles.input}
             required
           />
-        </div>
-
-        <button className="button" type="submit">
-          Iniciar Sesión
-        </button>
-      </form>
+          {error && <p style={styles.error}>{error}</p>}
+          <button type="submit" style={styles.button}>
+            Iniciar Sesión
+          </button>
+        </form>
+      </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    background: "linear-gradient(to right, #4facfe, #00f2fe)",
+  },
+  card: {
+    width: "100%",
+    maxWidth: "400px",
+    padding: "20px",
+    borderRadius: "10px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    textAlign: "center",
+  },
+  title: {
+    fontSize: "24px",
+    color: "#333333",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  input: {
+    marginBottom: "15px",
+    padding: "10px",
+    fontSize: "16px",
+    border: "1px solid #dddddd",
+    borderRadius: "5px",
+    outline: "none",
+  },
+  button: {
+    padding: "10px",
+    fontSize: "16px",
+    color: "#ffffff",
+    backgroundColor: "#4facfe",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
+  buttonHover: {
+    backgroundColor: "#00c6ff",
+  },
+  error: {
+    color: "red",
+    marginBottom: "15px",
+    fontSize: "14px",
+  },
 };
 
 export default Login;

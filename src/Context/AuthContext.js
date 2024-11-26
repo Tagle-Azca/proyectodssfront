@@ -5,21 +5,15 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (email, password) => {
-    // Simulación de autenticación (aquí deberías conectar con el backend)
-
-    if (email === "employee@example.com" && password === "employee123") {
-      setUser({ role: "employee", email });
-      return true;
-    }
-    if (email === "client@example.com" && password === "client123") {
-      setUser({ role: "client", email });
-      return true;
-    }
-    return false; // Credenciales incorrectas
+  const login = (userData) => {
+    setUser(userData); // Guarda al usuario en el estado
+    localStorage.setItem("user", JSON.stringify(userData)); // Persistencia local
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null); // Elimina al usuario del estado
+    localStorage.removeItem("user"); // Limpia el almacenamiento local
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
