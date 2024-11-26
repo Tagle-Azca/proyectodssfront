@@ -1,20 +1,16 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../Context/AuthContext"; // Asegúrate de tener este contexto
 
-const ProtectedRoute = ({ role, children }) => {
-  const { user } = useAuth(); // Obtener el usuario autenticado desde el contexto
+const ProtectedRoute = ({ children }) => {
+  const { currentUser } = useAuth(); // Verifica si el usuario está autenticado
 
-  // Verificar si el usuario está autenticado
-  if (!user) {
+  // Si no está autenticado, redirige al login
+  if (!currentUser) {
     return <Navigate to="/login" />;
   }
 
-  // Verificar si el rol del usuario coincide con el requerido
-  if (role && user.role !== role) {
-    return <Navigate to="/" />; // Redirigir si el rol no coincide
-  }
-
+  // Si está autenticado, renderiza el componente hijo
   return children;
 };
 

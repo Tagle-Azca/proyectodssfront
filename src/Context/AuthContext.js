@@ -1,25 +1,29 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
-  const login = (userData) => {
-    setUser(userData); // Guarda al usuario en el estado
-    localStorage.setItem("user", JSON.stringify(userData)); // Persistencia local
-  };
-
-  const logout = () => {
-    setUser(null); // Elimina al usuario del estado
-    localStorage.removeItem("user"); // Limpia el almacenamiento local
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+export const useAuth = () => {
+  return useContext(AuthContext);
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null); // Estado para el usuario autenticado
+
+  // Función de login (ejemplo)
+  const login = (user) => {
+    setCurrentUser(user);
+  };
+
+  // Función de logout
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+  const value = {
+    currentUser,
+    login,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
