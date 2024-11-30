@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
 const Login = () => {
-  const { login } = useAuth(); // Acceso al contexto de autenticación
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -16,19 +16,27 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
+    if (!email || !password) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
     try {
-      const response = await fetch(`${apiUrl}/api/auth/login`, {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ rfc: email, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error del backend:", errorData); // Agregado
-        setError(errorData.message || "Error al iniciar sesión");
+        console.error("Error del backend:", errorData);
+        setError(
+          errorData.message ||
+            `Error: ${response.status} - ${response.statusText}`
+        );
         return;
       }
 
@@ -36,18 +44,13 @@ const Login = () => {
       console.log("Respuesta del backend:", data);
 
       if (data && data.user) {
-        login(data.user); // Guarda al usuario en el contexto global
-        if (data.user.role === "Administrador") {
-          navigate("/employee");
-        } else if (data.user.role === "cliente") {
-          navigate("/client");
-        } else {
-          navigate("/");
-        }
+        login(data.user);
+        navigate(data.user.role === "Administrador" ? "/employee" : "/client");
       } else {
         setError("Respuesta inesperada del servidor");
       }
     } catch (err) {
+      console.error("Error de conexión al servidor:", err);
       setError("Error de conexión al servidor");
     }
   };
@@ -126,9 +129,6 @@ const styles = {
     borderRadius: "5px",
     cursor: "pointer",
     transition: "background-color 0.3s ease",
-  },
-  buttonHover: {
-    backgroundColor: "#00c6ff",
   },
   error: {
     color: "red",
