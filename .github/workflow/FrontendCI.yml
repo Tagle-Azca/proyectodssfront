@@ -3,10 +3,10 @@ name: Frontend CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -80,7 +80,7 @@ jobs:
 
       - name: Deploy to Vercel
         run: |
-          if [ "${{ github.ref_name }}" == "main" ]; then
+          if [ "${{ github.ref_name }}" == "master" ]; then
             echo "Deploying frontend to production"
             npm run deploy:production
           else
