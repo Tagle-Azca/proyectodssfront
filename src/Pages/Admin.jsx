@@ -15,9 +15,8 @@ import {
 const Admin = () => {
   const [selectedSection, setSelectedSection] = useState("Dashboard");
 
-  // Generar faltas aleatorias para los días del mes
   const generateRandomFaltas = (dias = 30) => {
-    return Array.from({ length: dias }, () => Math.random() < 0.2); // 20% de probabilidad de faltar
+    return Array.from({ length: dias }, () => Math.random() < 0.2);
   };
 
   // Lista de empleados con faltas mensuales aleatorias

@@ -7,14 +7,12 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null); // Estado para el usuario autenticado
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // Función de login (ejemplo)
   const login = (user) => {
     setCurrentUser(user);
   };
 
-  // Función de logout
   const logout = () => {
     setCurrentUser(null);
   };
