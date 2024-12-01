@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 const Employee = () => {
-  const [users, setUsers] = useState([]); // Almacena todos los usuarios
-  const [searchTerm, setSearchTerm] = useState(""); // Término de búsqueda
-  const [filteredUsers, setFilteredUsers] = useState([]); // Usuarios filtrados
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const apiUrl = process.env.REACT_APP_API_URL; // Usar la variable de entorno
 
-  // Fetch de usuarios desde el backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/users`);
+        const response = await fetch(`${apiUrl}/users`); // Evitar doble /api en la URL
         if (!response.ok) {
           console.error("Error al obtener usuarios");
           return;
@@ -25,7 +24,6 @@ const Employee = () => {
     fetchUsers();
   }, [apiUrl]);
 
-  // Manejar la búsqueda
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);

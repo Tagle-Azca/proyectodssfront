@@ -22,29 +22,24 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rfc: email, password }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error del backend:", errorData);
-        setError(
-          errorData.message ||
-            `Error: ${response.status} - ${response.statusText}`
-        );
-        return;
+        throw new Error(errorData.message || "Error en el servidor");
       }
 
       const data = await response.json();
-      console.log("Respuesta del backend:", data);
+      console.log("Login exitoso:", data);
 
       if (data && data.user) {
         login(data.user);
@@ -56,7 +51,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Error de conexión al servidor:", err);
-      setError("Error de conexión al servidor");
+      setError(err.message || "Error de conexión al servidor");
     }
   };
 
