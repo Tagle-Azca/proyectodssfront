@@ -22,13 +22,16 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ rfc: email, password }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ rfc: email, password }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -45,7 +48,9 @@ const Login = () => {
 
       if (data && data.user) {
         login(data.user);
-        navigate(data.user.role === "Administrador" ? "/employee" : "/client");
+        const destination =
+          data.user.role === "Administrador" ? "/employee" : "/client";
+        navigate(destination);
       } else {
         setError("Respuesta inesperada del servidor");
       }
